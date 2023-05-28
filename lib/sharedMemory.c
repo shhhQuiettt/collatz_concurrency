@@ -15,6 +15,8 @@
 #define SH_MEM_NAME "./.data/collatz_sh_mem"
 #define SH_TOP_COUNTER_NAME "./.data/top_number_sh_mem"
 
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+
 volatile uint64_t *attachSharedResults() {
   int sh_mem_fd = open(SH_MEM_NAME, O_RDWR | O_CREAT, 0600);
   ftruncate(sh_mem_fd, SH_MEM_SIZE);
@@ -25,7 +27,6 @@ volatile uint64_t *attachSharedResults() {
   return shared_results;
 }
 
-pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
 volatile atomic_uint_fast64_t *attachTopNumber() {
   int sh_top_number_fd = open(SH_TOP_COUNTER_NAME, O_RDWR | O_CREAT, 0600);

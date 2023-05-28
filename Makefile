@@ -4,7 +4,7 @@ CFLAGS = -Wall -Wextra -pthread
 all: program
 	
 program: ./build/collatz.o ./build/collatzUtils.o ./build/sharedMemory.o
-	rm -f ./.data/* && $(CC) $(CFLAGS) -o collatz ./build/collatz.o ./build/collatzUtils.o ./build/sharedMemory.o
+	$(CC) $(CFLAGS) -o collatz ./build/collatz.o ./build/collatzUtils.o ./build/sharedMemory.o
 
 ./build/collatz.o: collatz.c lib/collatzUtils.h lib/sharedMemory.h
 	$(CC) $(CFLAGS) -c collatz.c -o ./build/collatz.o
@@ -17,5 +17,6 @@ program: ./build/collatz.o ./build/collatzUtils.o ./build/sharedMemory.o
 
 clean:
 	rm -f ./build/*
-	rm -f collatz
+	rm -f ./.data/*
+	# rm -f collatz
 
