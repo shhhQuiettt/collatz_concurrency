@@ -25,9 +25,10 @@ int main(int argc, char **argv) {
     uint64_t current_number = atomic_fetch_add(shared_top_number, 1);
 
     if (current_number >= max_steps) {
-      /* syncSharedResults(shared_results); */
-      /* syncTopNumber(shared_top_number); */
 
+      // Results are saved without this calls
+      syncSharedResults(shared_results);
+      syncTopNumber(shared_top_number);
       return 0;
     }
 

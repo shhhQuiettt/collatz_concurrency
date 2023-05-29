@@ -9,6 +9,9 @@
 *.elf
 
 .ccls-cache/
+collatz
+test
+reader
 
 # Linker output
 *.ilk
