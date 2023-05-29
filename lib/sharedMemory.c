@@ -14,6 +14,7 @@
 
 #define SH_MEM_NAME "./.data/collatz_sh_mem"
 #define SH_TOP_COUNTER_NAME "./.data/top_number_sh_mem"
+#define SH_WORKERS_ACTIVE_COUNTER_NAME "/workers_active4"
 
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
@@ -48,6 +49,17 @@ volatile atomic_uint_fast64_t *attachTopNumber() {
   close(sh_top_number_fd);
 
   return shared_top_number;
+}
+
+atomic_uint *attachActiveWorkersCounter() {
+  fflush(stdout);
+  int fd = shm_open(SH_WORKERS_ACTIVE_COUNTER_NAME, O_RDWR | O_CREAT, 0600);
+  ftruncate(fd, sizeof(atomic_uint));
+  atomic_uint *counter = mmap(NULL, sizeof(atomic_uint), PROT_READ | PROT_WRITE,
+                              MAP_SHARED, fd, 0);
+  close(fd);
+  fflush(stdout);
+  return counter;
 }
 
 int indexOfNumber(uint64_t number) { return 5 * number; }

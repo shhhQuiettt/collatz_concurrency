@@ -2,13 +2,14 @@
 #define SHARED_MEMORY_H
 #endif
 
-#include <stdint.h>
 #include <stdatomic.h>
-
+#include <stdint.h>
 
 volatile uint64_t *attachSharedResults();
 
 volatile atomic_uint_fast64_t *attachTopNumber();
+
+atomic_uint *attachActiveWorkersCounter();
 
 void syncTopNumber(volatile atomic_uint_fast64_t *shared_top_number);
 
