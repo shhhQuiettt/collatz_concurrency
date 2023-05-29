@@ -1,6 +1,7 @@
 #include "lib/collatzUtils.h"
 #include "lib/sharedMemory.h"
 #include <fcntl.h>
+#include <signal.h>
 #include <stdatomic.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -15,7 +16,6 @@ int main(int argc, char **argv) {
     return 1;
   }
 
-
   const uint64_t max_steps = atoi(argv[1]);
 
   volatile uint64_t *shared_results = attachSharedResults();
@@ -24,10 +24,10 @@ int main(int argc, char **argv) {
   while (0 == 0) {
     uint64_t current_number = atomic_fetch_add(shared_top_number, 1);
 
-    /* printf("I am process %d, and I am working on %ld\n", getpid(), */
-           /* current_number); */
-
     if (current_number >= max_steps) {
+      /* syncSharedResults(shared_results); */
+      /* syncTopNumber(shared_top_number); */
+
       return 0;
     }
 

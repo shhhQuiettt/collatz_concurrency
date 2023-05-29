@@ -23,10 +23,10 @@ volatile uint64_t *attachSharedResults() {
   // should it be atomic?
   volatile uint64_t *shared_results =
       mmap(NULL, SH_MEM_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, sh_mem_fd, 0);
-
+  // Should it be closed?
+  close(sh_mem_fd);
   return shared_results;
 }
-
 
 volatile atomic_uint_fast64_t *attachTopNumber() {
   int sh_top_number_fd = open(SH_TOP_COUNTER_NAME, O_RDWR | O_CREAT, 0600);
@@ -36,6 +36,7 @@ volatile atomic_uint_fast64_t *attachTopNumber() {
            MAP_SHARED, sh_top_number_fd, 0);
 
   // is mutex neccessary?
+  //  is the double check proper?
   if (*shared_top_number == 0) {
     pthread_mutex_lock(&mutex);
     if (*shared_top_number == 0) {
@@ -43,6 +44,8 @@ volatile atomic_uint_fast64_t *attachTopNumber() {
     }
     pthread_mutex_unlock(&mutex);
   }
+
+  close(sh_top_number_fd);
 
   return shared_top_number;
 }
