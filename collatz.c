@@ -18,28 +18,28 @@ int main(int argc, char **argv) {
 
   const uint64_t max_steps = atoi(argv[1]);
 
-  volatile uint64_t *shared_results = attachSharedResults();
-  volatile atomic_uint_fast64_t *shared_top_number = attachTopNumber();
+  uint64_t *shared_results = attachSharedStepsForNumber();
+  atomic_uint_fast64_t *shared_top_number = attachNextToCompute();
 
   // this is weird
-  volatile atomic_uint *workers_active_counter = attachActiveWorkersCounter();
-
+  atomic_uint *workers_active_counter = attachActiveWorkersCounter();
   atomic_fetch_add(workers_active_counter, 1);
+
   while (0 == 0) {
     uint64_t current_number = atomic_fetch_add(shared_top_number, 1);
 
     if (current_number >= max_steps) {
 
       // Results are saved without this calls
-      syncSharedResults(shared_results);
-      syncTopNumber(shared_top_number);
+      /* syncSharedResults(shared_results); */
+      /* syncTopNumber(shared_top_number); */
 
       // its probably not a good approach
       // signal handling?
       /* printf(""); */
-      atomic_fetch_sub(workers_active_counter, 1);
-      while (atomic_fetch_add(workers_active_counter, 0) > 0) {
-      }
+      /* atomic_fetch_sub(workers_active_counter, 1); */
+      /* while (atomic_fetch_add(workers_active_counter, 0) > 0) { */
+      /* } */
 
       return 0;
     }

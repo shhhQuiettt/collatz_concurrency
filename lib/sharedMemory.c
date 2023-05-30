@@ -12,29 +12,30 @@
 #define MAX_MAX_STEPS 10000000
 #define SH_MEM_SIZE (MAX_MAX_STEPS * 5 * sizeof(uint64_t))
 
-#define SH_MEM_NAME "./.data/collatz_sh_mem"
-#define SH_TOP_COUNTER_NAME "./.data/top_number_sh_mem"
+#define SH_MEM_NAME "/collatz_sh_mem"
+#define SH_TOP_COUNTER_NAME "/top_number_sh_mem"
 #define SH_WORKERS_ACTIVE_COUNTER_NAME "/workers_active4"
 
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
-volatile uint64_t *attachSharedResults() {
-  int sh_mem_fd = open(SH_MEM_NAME, O_RDWR | O_CREAT, 0600);
-  ftruncate(sh_mem_fd, SH_MEM_SIZE);
+uint64_t *attachSharedStepsForNumber() {
+  int shMemFd = shm_open(SH_MEM_NAME, O_RDWR | O_CREAT, 0600);
+  ftruncate(shMemFd, SH_MEM_SIZE);
   // should it be atomic?
-  volatile uint64_t *shared_results =
-      mmap(NULL, SH_MEM_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, sh_mem_fd, 0);
+  uint64_t *stepsForNumber =
+      mmap(NULL, SH_MEM_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, shMemFd, 0);
   // Should it be closed?
-  close(sh_mem_fd);
-  return shared_results;
+  close(shMemFd);
+  return stepsForNumber;
 }
 
-volatile atomic_uint_fast64_t *attachTopNumber() {
-  int sh_top_number_fd = open(SH_TOP_COUNTER_NAME, O_RDWR | O_CREAT, 0600);
-  ftruncate(sh_top_number_fd, sizeof(uint64_t));
-  volatile atomic_uint_fast64_t *shared_top_number =
+atomic_uint_fast64_t *attachNextToCompute() {
+  int shNextNumberFd = shm_open(SH_TOP_COUNTER_NAME, O_RDWR | O_CREAT, 0600);
+  ftruncate(shNextNumberFd, sizeof(uint64_t));
+
+  atomic_uint_fast64_t *shared_top_number =
       mmap(NULL, sizeof(atomic_uint_fast64_t), PROT_READ | PROT_WRITE,
-           MAP_SHARED, sh_top_number_fd, 0);
+           MAP_SHARED, shNextNumberFd, 0);
 
   // is mutex neccessary?
   //  is the double check proper?
@@ -46,19 +47,17 @@ volatile atomic_uint_fast64_t *attachTopNumber() {
     pthread_mutex_unlock(&mutex);
   }
 
-  close(sh_top_number_fd);
+  close(shNextNumberFd);
 
   return shared_top_number;
 }
 
 atomic_uint *attachActiveWorkersCounter() {
-  fflush(stdout);
   int fd = shm_open(SH_WORKERS_ACTIVE_COUNTER_NAME, O_RDWR | O_CREAT, 0600);
   ftruncate(fd, sizeof(atomic_uint));
   atomic_uint *counter = mmap(NULL, sizeof(atomic_uint), PROT_READ | PROT_WRITE,
                               MAP_SHARED, fd, 0);
   close(fd);
-  fflush(stdout);
   return counter;
 }
 
@@ -78,10 +77,10 @@ void printResults(volatile uint64_t *shared_results, uint64_t max_steps) {
   }
 }
 
-void syncTopNumber(volatile atomic_uint_fast64_t *shared_top_number) {
-  msync((void *)shared_top_number, sizeof(atomic_uint_fast64_t), MS_SYNC);
-}
+/* void syncTopNumber(volatile atomic_uint_fast64_t *shared_top_number) { */
+/*   msync((void *)shared_top_number, sizeof(atomic_uint_fast64_t), MS_SYNC); */
+/* } */
 
-void syncSharedResults(volatile uint64_t *shared_results) {
-  msync((void *)shared_results, SH_MEM_SIZE, MS_SYNC);
-}
+/* void syncSharedResults(volatile uint64_t *shared_results) { */
+/*   msync((void *)shared_results, SH_MEM_SIZE, MS_SYNC); */
+/* } */
