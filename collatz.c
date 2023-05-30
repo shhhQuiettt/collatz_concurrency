@@ -20,6 +20,8 @@ bool endFlag = false;
 
 void handleSigint(int sig) {
   if (sig == SIGINT) {
+    write(STDOUT_FILENO, "SIGINT received, waiing for end of computation...\n",
+          sizeof("SIGINT received, waiing for end of computation...\n"));
     endFlag = true;
   }
 }
@@ -42,8 +44,10 @@ int main(int argc, char **argv) {
 
   const int nextToComputeOffset = 512;
 
-  while (!endFlag &&
-         atomic_load(&shared_results->filledInCounter) < 5 * (max_steps - 11)) {
+  while (!endFlag && (atomic_load(&shared_results->filledInCounter) <
+                          5 * (max_steps - 11) ||
+                      atomic_load(&shared_results->maxCollatzArgument) >
+                          atomic_load(sharedNextToCompute))) {
 
     uint64_t current_number =
         atomic_fetch_add(sharedNextToCompute, nextToComputeOffset);

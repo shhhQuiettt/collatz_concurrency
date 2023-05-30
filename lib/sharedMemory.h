@@ -23,6 +23,7 @@ struct MinNumberForStep {
 
 struct Results {
   atomic_uint filledInCounter;
+  atomic_uint_fast64_t maxCollatzArgument;
   struct MinNumberForStep minSteps[MAX_MAX_STEPS];
 };
 

@@ -69,6 +69,10 @@ void populateResults(struct Results *shared_results, uint64_t collatzArgument,
 
       shared_results->minSteps[noOfSteps].index[i] = collatzArgument;
 
+      if (shared_results->maxCollatzArgument < collatzArgument) {
+        shared_results->maxCollatzArgument = collatzArgument;
+      }
+
       atomic_fetch_add(&shared_results->filledInCounter, 1);
       filledInFlag = true;
 
