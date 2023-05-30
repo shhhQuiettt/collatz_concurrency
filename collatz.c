@@ -12,10 +12,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#define ACTIVE_WORKERS_BARRIER_NAME "/active_workers_barrier"
 #define INIT_SEM_NAME "/init_sem"
 
-atomic_uint *workers_active_counter;
 struct Results *shared_results;
 sem_t *init_sem;
 bool endFlag = false;
@@ -41,12 +39,11 @@ int main(int argc, char **argv) {
   sem_post(init_sem);
 
   signal(SIGINT, handleSigint);
-  atomic_fetch_add(workers_active_counter, 1);
 
-  const int nextToComputeOffset = 1;
+  const int nextToComputeOffset = 512;
 
   while (!endFlag &&
-         atomic_load(&shared_results->fillInCounter) < 5 * (max_steps - 11)) {
+         atomic_load(&shared_results->filledInCounter) < 5 * (max_steps - 11)) {
 
     uint64_t current_number =
         atomic_fetch_add(sharedNextToCompute, nextToComputeOffset);

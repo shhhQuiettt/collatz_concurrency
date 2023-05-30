@@ -22,7 +22,7 @@ struct MinNumberForStep {
 };
 
 struct Results {
-  atomic_uint fillInCounter;
+  atomic_uint filledInCounter;
   struct MinNumberForStep minSteps[MAX_MAX_STEPS];
 };
 

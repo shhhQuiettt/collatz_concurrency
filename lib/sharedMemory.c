@@ -69,6 +69,7 @@ void populateResults(struct Results *shared_results, uint64_t collatzArgument,
 
       shared_results->minSteps[noOfSteps].index[i] = collatzArgument;
 
+      atomic_fetch_add(&shared_results->filledInCounter, 1);
       filledInFlag = true;
 
       break;
