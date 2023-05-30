@@ -11,7 +11,7 @@
 
 #define SH_MEM_NAME "/collatz_sh_mem"
 #define SH_TOP_COUNTER_NAME "/top_number_sh_mem"
-#define SH_WORKERS_ACTIVE_COUNTER_NAME "/workers_active"
+#define SH_SEM_INITIALIZED_FLAG "/sem_init_flag"
 
 #define SEM_TOP_NUMBER_NAME "/sem_top_number"
 #define SEM_INIT_RESULTS_NAME "/sem_init_result8"

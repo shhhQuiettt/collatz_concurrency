@@ -22,7 +22,6 @@ bool endFlag = false;
 
 void handleSigint(int sig) {
   if (sig == SIGINT) {
-    printf("Ending...\n");
     endFlag = true;
   }
 }
@@ -39,7 +38,6 @@ int main(int argc, char **argv) {
   sem_wait(init_sem);
   shared_results = attachSharedResults(max_steps);
   atomic_uint_fast64_t *sharedNextToCompute = attachNextToCompute();
-  workers_active_counter = attachActiveWorkersCounter();
   sem_post(init_sem);
 
   signal(SIGINT, handleSigint);
@@ -50,23 +48,15 @@ int main(int argc, char **argv) {
   while (!endFlag &&
          atomic_load(&shared_results->fillInCounter) < 5 * (max_steps - 11)) {
 
-    /* printf("fillInCounter: %d\n", atomic_load(&shared_results->fillInCounter)); */
     uint64_t current_number =
         atomic_fetch_add(sharedNextToCompute, nextToComputeOffset);
 
-    /* printf("current_number: %ld\n", current_number); */
-    fflush(stdout);
-
     for (int n = 0; n < nextToComputeOffset; ++n) {
       uint64_t computedNumber = current_number + n;
-      /* printf("current Computed: %ld\n", computedNumber); */
-      fflush(stdout);
 
       uint64_t noOfSteps = no_of_colnatz_steps(computedNumber);
 
       if (noOfSteps >= 11 && noOfSteps < max_steps) {
-        /* printf("Populating results for %ld\n", computedNumber); */
-        /* fflush(stdout); */
         populateResults(shared_results, computedNumber, noOfSteps);
       }
     }

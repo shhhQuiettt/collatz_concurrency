@@ -11,9 +11,12 @@ int main(int argc, char **argv) {
   }
 
   int no_of_steps = atoi(argv[1]);
-  volatile atomic_uint_fast64_t* top_number = attachNextToCompute();
+  volatile atomic_uint_fast64_t *top_number = attachNextToCompute();
   if (*top_number < no_of_steps - 1) {
-    fprintf(stderr, "No results enaugh result to print. (Top number: %ld), (Wanted: %d)\n", *top_number, no_of_steps);
+    fprintf(
+        stderr,
+        "No results enaugh result to print. (Top number: %ld), (Wanted: %d)\n",
+        *top_number, no_of_steps);
     return 1;
   }
   struct Results *shared_results = attachSharedResults(no_of_steps);
