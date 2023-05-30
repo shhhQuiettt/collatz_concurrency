@@ -16,7 +16,5 @@ program: ./build/collatz.o ./build/collatzUtils.o ./build/sharedMemory.o
 	$(CC) $(CFLAGS) -c lib/sharedMemory.c -o ./build/sharedMemory.o
 
 clean:
-	rm -f ./build/*
-	rm -f ./.data/*
-	# rm -f collatz
+	rm -f collatz
 
