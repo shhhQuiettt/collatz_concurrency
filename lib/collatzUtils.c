@@ -1,8 +1,10 @@
 #include <stdint.h>
+#include <semaphore.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 typedef uint64_t natural_number;
+
 
 uint64_t no_of_colnatz_steps(natural_number x) {
   uint64_t steps = 0;

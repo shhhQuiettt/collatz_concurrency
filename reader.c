@@ -16,7 +16,7 @@ int main(int argc, char **argv) {
     fprintf(stderr, "No results enaugh result to print. (Top number: %ld), (Wanted: %d)\n", *top_number, no_of_steps);
     return 1;
   }
-  volatile uint64_t *shared_results = attachSharedStepsForNumber();
+  struct Results *shared_results = attachSharedResults(no_of_steps);
 
   printResults(shared_results, no_of_steps);
 }
