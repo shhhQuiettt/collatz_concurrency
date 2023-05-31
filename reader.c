@@ -1,3 +1,5 @@
+// This program reads the results of the collatz program
+//
 #include "lib/sharedMemory.h"
 
 #include <stdatomic.h>

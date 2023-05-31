@@ -1,3 +1,4 @@
+//This program can be used to time the execution of the parrarel collatz programs
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/wait.h>
